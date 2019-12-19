@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+
+  mongo:
+    image: mongo:4.0.6
+    volumes:
+      - ./data/db:/data/db
+
+  zookeeper:
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/zookeeper:3.4.14
+    ports:
+      - 2181:2181
+    volumes:
+      - ./config/zoo.cfg:/opt/zookeeper-3.4.14/conf/zoo.cfg
+      - ./data/zookeeper:/data/zookeeper
+
+  kafka:
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/kafka:2.2.0
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    volumes:
+      - ./config/kafka-server.properties:/opt/kafka_2.12-2.2.0/config/server.properties
+      - ./data/kafka:/data/kafka-logs
+
+  elasticsearch:
+    image: elasticsearch:6.7.1
+    restart: always
+    environment:
+      - cluster.name=elasticsearch
+    ports:
+      - 9300:9300
+      - 9200:9200
+    volumes:
+      - ./config/es-jvm.options:/usr/share/elasticsearch/config/jvm.options
+      - ./config/es.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./data/es:/usr/share/elasticsearch/es
+#      - ~/es-plugin:/usr/share/elasticsearch/plugins
+
+  crp-main:
+    image: it-artifactory.yitu-inc.com/docker-local/crp_main:latest
+    ports:
+      - 8084:8080
+    links:
+      - mongo
+      - kafka
+      - elasticsearch
+    volumes:
+      - ./config/application-dev.yaml:/app/config/application-dev.yaml
+
+  api-gateway:
+    image: it-artifactory.yitu-inc.com/zagu-docker/api-gateway:release_1.4.0
+    ports:
+      - 8060:8080
+    links:
+      - crp-main
+    volumes:
+      - ./config/application-gateway.yml:/app/config/application.yml
+
+  wa-website:
+    image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/crp/wa-website:develop-03008e80
+    ports:
+      - 8088:80

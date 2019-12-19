@@ -1,0 +1,18 @@
+version: "2"
+
+services:
+  azkaban:
+    image: it-artifactory.yitu-inc.com/docker/test/fxu/azkaban:v3.79.3
+    environment:
+      - LANG=C.UTF-8
+      - PYTHONIOENCODING=utf-8
+    ports:
+      - 8088:8088
+    volumes:
+      - ./bin/azkaban/clickhouse:/app/clickhouse
+      - ./log/azkaban:/app/logs
+      - ./data/azkaban:/app/data
+      - ./bin/azkaban/venv:/app/venv
+      - ./bin/azkaban/opt:/opt
+      - ./config/azkaban:/app/conf
+      - ./data/report:/app/report

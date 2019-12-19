@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  elasticsearch:
+    image: elasticsearch:6.7.1
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      - cluster.name=elasticsearch
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+#      - ./log/es:/usr/share/elasticsearch/es/logs
+      - ./config/es-jvm.options:/usr/share/elasticsearch/config/jvm.options
+      - ./config/es.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#      - ./data:/usr/share/elasticsearch/es/data
+
+  elasticsearch-head:
+    image: docker.io/mobz/elasticsearch-head:5
+    ports:
+      - 9100:9100
+

@@ -1,0 +1,39 @@
+# 默认集群
+elasticsearch:
+  ip: elasticsearch
+  port: 9200
+# 原始数据集群
+elasticsearch_raw:
+  ip: elasticsearch
+  port: 9200
+# 备份集群
+elasticsearch_backup:
+  ip: elasticsearch
+  port: 9200
+
+# mongo 统一配置
+mongodb:
+  host: mongo
+  port: 27017
+  database: crp-wa
+
+# resource manager的 标签库配置
+resourcemanager:
+  table: wa_labels  # 表名
+  treeExecutorThreadNum: 1  # 用于处理同步和保存数据的线程个数
+  controlExecutorThreadNum: 1 # 用于处理单key互斥的线程个数
+  ioExecutorThreadNum: 1 # 用于处理io操作的线程个数
+
+# 消息配置
+messages:
+  context:
+    count: 1  # 搜索消息上下文返回的数量
+
+# kafka 配置
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+    # 标签库事件topic
+    label-topic: crp_labelEvent
+    # 任务变更事件topic
+    task-topic: crp_taskEvent

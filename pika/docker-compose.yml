@@ -1,0 +1,16 @@
+version: "3"
+ 
+services:
+  pika:
+    image: pikadb/pika:v3.2.2
+    container_name: PIKA
+    ports:
+      - 9221:9221
+    volumes:
+      - ./conf/pika.conf:/pika/output/conf/pika.conf
+      - ./data/output/pika-db:/pika/output/db
+      - ./data/output/pika-log:/pika/output/log
+      - ./data/output/pika-dbsync:/pika/output/dbsync
+      - ./data/output/pika-dump:/pika/output/dump
+    entrypoint:
+      bin/pika -c ./conf/pika.conf

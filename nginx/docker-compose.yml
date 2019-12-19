@@ -1,0 +1,15 @@
+version: '2.0'
+
+services:
+  nginx:
+    restart: always
+    image: nginx:latest
+    ports:
+      - 8081:80
+      - 8848:81
+      - 8866:82
+    volumes:
+      - ./config/website/conf.d:/etc/nginx/conf.d
+      - ./log/website:/var/log/nginx
+      - ./bin/website/www:/var/www
+#      - /etc/letsencrypt:/etc/letsencrypt

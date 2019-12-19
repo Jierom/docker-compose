@@ -1,0 +1,28 @@
+version: "2"
+ 
+services:
+  mysql:
+    image: mysql:5.7.14
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: can123mima
+      MYSQL_DATABASE: yourdb
+      MYSQL_USER: yourname
+      MYSQL_PASSWORD: yourpw
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  qshow:
+    image: it-artifactory.yitu-inc.com/docker/test/fxu/qshow:1.0.3
+    links:
+      - mysql
+    ports:
+      - 8080:8080
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: can123mima
+    volumes:
+      - ./conf/qshow:/app/config
