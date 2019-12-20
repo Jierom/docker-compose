@@ -1,0 +1,18 @@
+hobbit:
+  urls: 10.40.86.48:8121
+  bucketName: crp_dev
+
+kafka:
+  producer:
+    topic: loaded_msg_dev001
+    server: localhost:9092
+
+job:
+  textHomePath: /home/zgtian/codes/wawx/msg20191211
+  mediaHomePath: /home/zgtian/codes/wawx/msg20191211 # todo
+  startDate: 20111101
+  endDate: 21201112
+  ignoreFilenameStr: alarm # 需要过滤掉的文件名中包含的字符串
+  readerThreadNum: 2 # 生产者线程池大小
+  sinkerThreadNum: 4 # 消费者线程池大小
+  textOnly: true
