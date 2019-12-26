@@ -1,0 +1,26 @@
+fp-clusters:
+  fp_clusters:
+    - ip: 10.40.58.212
+      id: fp_cluster_id1
+      name: fp_cluster_name1
+      region:
+        province: 上海
+        city: 上海
+        county: 浦东
+      product_info:
+        product_name: fp
+        product_version: 1.8.4
+      user: admin
+      password: admin123
+    - ip: 10.40.58.212
+      id: fp_cluster_id2
+      name: fp_cluster_name2
+      region:
+        province: 上海
+        city: 上海
+        county: 中国
+      product_info:
+        product_name: fp
+        product_version: 1.9.4
+      user: admin
+      password: admin123

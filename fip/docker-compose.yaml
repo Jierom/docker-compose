@@ -1,5 +1,4 @@
 version: "3"
-
 services:
   redis:
     image: redis:5.0.4
@@ -22,13 +21,13 @@ services:
       - 27017:27017
 
   vpp:
-    image: 10.40.80.18:5001/vpp:20190805
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/vpp:20190805
     ports:
       - 8082:8082
     links:
       - fip-mongo
     volumes:
-      - /mnt/WXEG0048_ssd/fip_compose/dev/vpp/config/application.properties:/app/config/application.properties
+      - ./vpp/config/application.properties:/app/config/application.properties
 
   pilot:
     image: it-artifactory.yitu-inc.com/zagu-docker/pilot:fip_1.3.0
@@ -43,45 +42,23 @@ services:
       MYSQL_DB_PASSWORD: Pilot123
 
   fip-main:
-    image: fip-main:c2579d08
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/fip-main:98149654
     links:
       - fip-mongo
       - vpp
       - repo-manager
     ports:
-      - 8382:8090
+      - 8090:8090
       - 3456:3456
-    environment:
-      LUCIFRON_HOST: 10.40.80.43
-
-      DEBUG_OUTSIDE_RAGNAROS: "true"
-      #如果大螺丝在外部, 那这两个IP要配成自己机器的IP, 视频分析才能work
-      DEBUG_EXTERNAL_IP: 10.10.25.87
-      LOCAL_HOST: 10.10.25.87
-
-      LICENSE_HOST: 10.40.50.172
-      LICENSE_PORT: 7411
-      LICENSE_ENABLED: "false"
-
-      CLUSTER_ID: yitu001_id
-      CLUSTER_NAME: yitu001_name
-      CLUSTER_PROVINCE: shandong
-      CLUSTER_CITY: jinan
-      CLUSTER_COUNTY: somewhere
-
-      P2P_PROXY_URL: 127.0.0.1
-      P2P_PROXY_PORT: 7092
-      P2P_SERVICE_PORT: 6600
+    volumes:
+      - ./fip-main/config/application.yaml:/app/config/application.yaml
 
   frontend-web:
-    image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/portrait-identification/website:master-dd553c1b
+    image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/portrait-identification/website:master-c4f25a96
     ports:
       - 4000:80
     volumes:
-      - /mnt/WXEG0048_ssd/fip_compose/dev/node/config.template.js:/usr/share/nginx/html/config.js
-
-      # - /mnt/WXEG0048_ssd/fip_compose/dev/node/nginx.conf:/etc/nginx/nginx.conf
-      # - /mnt/WXEG0048_ssd/fip_compose/dev/node/default.conf:/etc/nginx/conf.d/default.conf
+      - ./website/config.template.js:/usr/share/nginx/html/config.js
 
   frontend-node:
     image: it-artifactory.yitu-inc.com/ipiw-docker/ipiw-node:master-1eb31d9a
@@ -102,18 +79,18 @@ services:
     ports:
       - 8060:8080
     volumes:
-      - /mnt/WXEG0048_ssd/fip_compose/dev/gateway/config/application.yml:/app/config/application.yml
-      - /mnt/WXEG0048_ssd/fip_compose/dev/gateway/config/rsaserver.keystore:/app/config/rsaserver.keystore
+      - ./gateway/config/application.yml:/app/config/application.yml
+      - ./gateway/config/rsaserver.keystore:/app/config/rsaserver.keystore
 
   p2p-api-gateway:
-    image: it-artifactory.yitu-inc.com/docker-local/p2p:feature_log_trace-287e50fb
+    image: it-artifactory.yitu-inc.com/docker-local/p2p:release_2-0-1-50f90995
     links:
       - pilot
       - fip-main
     ports:
       - 9080:9080
     volumes:
-      - /mnt/WXEG0048_ssd/fip_compose/dev/gateway/config/application-p2p.yml:/app/config/application.yml
+      - ./p2p/config/application.yml:/app/config/application.yml
 
   fp-proxy:
     image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/fip/fp-proxy:dev-8ec77215
@@ -131,7 +108,7 @@ services:
     environment:
       MONGO_URI: mongodb://fip-mongo:27017/cvpf_image_server
     ports:
-      - 8383:8382
+      - 8382:8382
     links:
       - fip-mongo
 
@@ -149,7 +126,8 @@ services:
       SIS_PORT: 8382
       SERVER_PORT: 8585
       ENABLE_ROTATION: 'True'
-    entrypoint: ["java", "-jar", "-Dlogging.level.root=INFO", "/app/app.jar"]
+#    command: ["java", "-jar", "-Dlogging.level.root=DEBUG", "/app/app.jar"]
+    entrypoint: ["java", "-jar", "-Xmx8192M", "-Dlogging.level.root=DEBUG", "/app/app.jar"]
     ports:
       - 8585:8585
     links:

@@ -17,7 +17,7 @@ services:
 #      - ./data:/usr/share/elasticsearch/es/data
 
   elasticsearch-head:
-    image: docker.io/mobz/elasticsearch-head:5
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/elasticsearch-head:5
     ports:
       - 9100:9100
 

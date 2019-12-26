@@ -1,0 +1,15 @@
+flash3-clusters:
+  flash3_clusters:
+    -
+      ip: 10.40.58.212
+      id: fip-test
+      name: fip-test
+      region:
+        province: 上海
+        city: 上海
+        county: 浦东
+      product_info:
+        product_name: fip
+        product_version: 1.9.4
+      user: admin
+      password: admin123

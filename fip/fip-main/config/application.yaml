@@ -1,0 +1,109 @@
+server:
+  port: 8090
+
+management:
+  endpoint:
+    metrics.enabled: true
+    prometheus.enabled: true
+  metrics.export.prometheus.enabled: true
+  endpoints.web.exposure.include: '*'
+
+asyn-pool:
+  maxRequestQueueLength: 20000
+  maxConcurrentRequestNum: 200
+  coreThreadNum: 20
+
+http-config:
+  connectTimeout: 30000
+  readTimeout: 30000
+  maxConnectionNum: 2000
+  maxPerRoute: 1200
+  socketTimeout: 60000
+
+vpp:
+  host: vpp
+  port: 8082
+  debug_external_ip: 10.10.25.87
+
+repo:
+  url: http://repo-manager:8585
+  default_model: 3060
+
+p2p-config:
+  proxyUrl: p2p-api-gateway
+  proxyPort: 18888
+  p2pInfoPort: 6600
+
+task-config:
+  taskAliveDuration: 8400000
+  taskTimeOut: 100000
+  synQueryTimeOut: 60000
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  redis:
+    host: redis
+    port: 6379
+    password: 
+
+pilot:
+  url: http://pilot:8080
+  superAdminName: super_admin
+  rootPath: /account
+
+mongodb:
+  host: fip-mongo
+  port: 27017
+  database: fip
+
+cvpf-repository-manager:
+  host: repo-manager
+  port: 8585
+  model: 3060
+  part: FACE
+
+license:
+  host: 10.40.80.18
+  port: 7411
+  conn_timeout: 2000
+  send_timeout: 2000
+  recv_timeout: 6000
+  retry_interval: 1000
+  retry_times: 0
+  license_key: face_identification_platform
+  quota_key:
+  check_period: 10000
+
+ragnaros:
+  lucifron_host:  10.40.80.43
+  lucifron_port:  9990
+  local_host:  10.10.25.87
+  video_callback_port: 3456
+  face_image_feature_extract_group:  sample-feature-extract
+  face_anno_image_feature_extract_group:  sample-anno-feature-extract
+  verify_group:  sample-verify
+  face_video_recognition_group:  sample-face-video
+  face_normalize_group: sample-face-normalize
+  runtime_config_path:  config/runtime_config.json
+  default_face_image_feature_extract_request_path:  config/face_image_feature_extract_request.json
+  default_verify_request_path:  config/verify_request.json
+  default_face_normalize_request_path: config/face_normalize_request.json
+  debug_outside_ragnaros: true
+
+cluster-info:
+  gatewayPort: 9080
+  productName: fip
+  productVersion: 2.2.a
+  clusterId: hulk01
+  clusterName: hulk01
+  province: SH
+  city: SH
+  county: MH
+
+
+job:
+  cluster-info-update: ${JOB_CLUSTER_INFO_UPDATE:0 5 22 * * ?}
+  task-maintance:  ${TASK_MAINTANCE:0 5 0 * * ?}
