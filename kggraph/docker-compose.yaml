@@ -1,8 +1,20 @@
 version: "2"
 
 services:
+  mysql:
+    image: mysql:5.7.14
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: can123mima
+      MYSQL_DATABASE: kg_graph
+      MYSQL_USER: kg_graph
+      MYSQL_PASSWORD: kg_graph
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
   kggraph:
-    image: it-artifactory.yitu-inc.com/docker/test/fxu/kg-graph:v0.2.10
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-graph:v0.2.10
     ports:
       - 8080:8080
     volumes:
@@ -20,9 +32,18 @@ services:
       - SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
 
   kggraph-studio:
-    image: it-artifactory.yitu-inc.com/docker/test/fxu/kg-graph-studio:v0.2.10
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-graph-studio:v0.2.10
     ports:
       - 8088:8088
     volumes:
       - ./conf/hugegraph-studio-0.10.0/:/app/hugegraph-studio-0.10.0/conf/
-    
+  
+  kg-meta:
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-meta:v0.2.10
+    ports:
+      -  10843:10843
+    links:
+      - mysql
+    volumes: 
+      - ./conf/bdp-kg-meta/application-dev.yml:/app/config/application-dev.yml
+      - ./sql/init.sql:/app/sql/metadata_schema.sql

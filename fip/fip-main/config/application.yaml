@@ -23,7 +23,7 @@ http-config:
 vpp:
   host: vpp
   port: 8082
-  debug_external_ip: 10.10.25.87
+#  debug_external_ip: 127.0.0.1
 
 repo:
   url: http://repo-manager:8585
@@ -80,7 +80,7 @@ license:
 ragnaros:
   lucifron_host:  10.40.80.43
   lucifron_port:  9990
-  local_host:  10.10.25.87
+#  local_host:  127.0.0.1
   video_callback_port: 3456
   face_image_feature_extract_group:  sample-feature-extract
   face_anno_image_feature_extract_group:  sample-anno-feature-extract

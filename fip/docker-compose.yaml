@@ -52,6 +52,20 @@ services:
       - 3456:3456
     volumes:
       - ./fip-main/config/application.yaml:/app/config/application.yaml
+    environment:
+      LUCIFRON_HOST: 10.40.80.43
+      DEBUG_OUTSIDE_RAGNAROS: "true"
+      #如果大螺丝在外部, 那这两个IP要配成自己机器的IP, 视频分析才能work
+      DEBUG_EXTERNAL_IP: 10.10.25.87
+      LOCAL_HOST: 10.10.25.87
+      LICENSE_HOST: 10.40.80.18
+      LICENSE_PORT: 7411
+      LICENSE_ENABLED: "false"
+      CLUSTER_ID: yitu001_id
+      CLUSTER_NAME: yitu001_name
+      CLUSTER_PROVINCE: shandong
+      CLUSTER_CITY: jinan
+      CLUSTER_COUNTY: somewhere
 
   frontend-web:
     image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/portrait-identification/website:master-c4f25a96
