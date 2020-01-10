@@ -42,8 +42,10 @@ services:
     image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-meta:v0.2.10
     ports:
       -  10843:10843
+    environment: 
+      - SPRING_DATASOURCE_DATA[0]=file:/app/sql/metadata_data.sql
     links:
       - mysql
     volumes: 
       - ./conf/bdp-kg-meta/application-dev.yml:/app/config/application-dev.yml
-      - ./sql/init.sql:/app/sql/metadata_schema.sql
+      - ./sql/metadata_data.sql:/app/sql/metadata_data.sql

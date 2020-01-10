@@ -5,7 +5,7 @@ services:
     volumes:
       - ./config/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
+      - 9090:9090
     restart: on-failure
   grafana:
     image: grafana/grafana:latest

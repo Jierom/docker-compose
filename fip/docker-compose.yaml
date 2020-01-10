@@ -19,6 +19,8 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
+    volumes:
+      - "/data/mongo:/data/db"
 
   vpp:
     image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/vpp:20190805
@@ -42,7 +44,8 @@ services:
       MYSQL_DB_PASSWORD: Pilot123
 
   fip-main:
-    image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/fip-main:98149654
+#    image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/fip-main:98149654
+    image: fip-main:200f9f38
     links:
       - fip-mongo
       - vpp
@@ -52,6 +55,8 @@ services:
       - 3456:3456
     volumes:
       - ./fip-main/config/application.yaml:/app/config/application.yaml
+      - ./fip-main/config/application-flash3_clusters.yaml:/app/config/application-flash3_clusters.yaml
+      - ./fip-main/config/application-fp_clusters.yaml:/app/config/application-fp_clusters.yaml
     environment:
       LUCIFRON_HOST: 10.40.80.43
       DEBUG_OUTSIDE_RAGNAROS: "true"
@@ -60,12 +65,12 @@ services:
       LOCAL_HOST: 10.10.25.87
       LICENSE_HOST: 10.40.80.18
       LICENSE_PORT: 7411
-      LICENSE_ENABLED: "false"
-      CLUSTER_ID: yitu001_id
-      CLUSTER_NAME: yitu001_name
-      CLUSTER_PROVINCE: shandong
-      CLUSTER_CITY: jinan
-      CLUSTER_COUNTY: somewhere
+      CLUSTER_ID: GD_SZ_001
+      CLUSTER_NAME: 广东深圳福田
+      CLUSTER_PROVINCE: 广东省
+      CLUSTER_CITY: 深圳市
+      CLUSTER_COUNTY: 福田区
+      JOB_CLUSTER_REPORT: "0 0/30 * * * ?"
 
   frontend-web:
     image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/portrait-identification/website:master-c4f25a96
@@ -97,7 +102,7 @@ services:
       - ./gateway/config/rsaserver.keystore:/app/config/rsaserver.keystore
 
   p2p-api-gateway:
-    image: it-artifactory.yitu-inc.com/docker-local/p2p:release_2-0-1-50f90995
+    image: it-artifactory.yitu-inc.com/zagu-docker/api-gateway:release_1.4.0
     links:
       - pilot
       - fip-main
@@ -106,6 +111,34 @@ services:
     volumes:
       - ./p2p/config/application.yml:/app/config/application.yml
 
+  p2p-component:
+    image: it-artifactory.yitu-inc.com/docker-local/p2p:release_2-0-1-50f90995
+    ports:
+      - 7093:7093
+      - 8443:8443
+      - 7600:7600
+    environment:
+      SPRING_APPLICATION_JSON: '
+                               {
+                                 "PROXY_PORT": 7093,
+                                 "HTTPS_PORT": 8443,
+                                 "HTTP_PORT": 7600,
+                                 "current_cluster_id": "GD_SZ_001",
+                                 "GATEWAY_HOST": "p2p-api-gateway",
+                                 "GATEWAY_PORT": 9080,
+                                 "p2p": {
+                                   "routes": {
+                                     "static": {
+                                       "directRoute": {
+                                         "GD_SZ_001": "10.10.25.87:8443:7600",
+                                         "GD_SZ_002": "10.40.57.75:8443:7600"
+                                       },
+                                       "indirectRoute": {}
+                                     }
+                                   }
+                                 }
+                               }
+                               '
   fp-proxy:
     image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/fip/fp-proxy:dev-8ec77215
     links:
@@ -140,10 +173,11 @@ services:
       SIS_PORT: 8382
       SERVER_PORT: 8585
       ENABLE_ROTATION: 'True'
-#    command: ["java", "-jar", "-Dlogging.level.root=DEBUG", "/app/app.jar"]
-    entrypoint: ["java", "-jar", "-Xmx8192M", "-Dlogging.level.root=DEBUG", "/app/app.jar"]
+    #    command: ["java", "-jar", "-Dlogging.level.root=DEBUG", "/app/app.jar"]
+    entrypoint: ["java", "-jar", "-Xmx8192M", "-Dlogging.level.root=INFO", "/app/app.jar"]
     ports:
       - 8585:8585
     links:
       - fip-mongo
       - image-server
+
