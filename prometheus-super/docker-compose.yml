@@ -9,20 +9,20 @@ services:
       hostname: prometheus
       restart: always
       volumes:
-          - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-          - ./config/node_down.yml:/etc/prometheus/node_down.yml
-          - ./bin/timezone:/etc/timezone
-          - ./bin/localtime:/etc/localtime
-          - ./data/prometheus:/prometheus
+        - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+        - ./config/node_down.yml:/etc/prometheus/node_down.yml
+        - ./bin/timezone:/etc/timezone
+        - ./bin/localtime:/etc/localtime
+        - ./data/prometheus:/prometheus
       ports:
-          - "9090:9090"
+        - "19090:9090"
       networks:
-          - monitor
+        - monitor
 
     pushgateway:
       image: prom/pushgateway
       ports:
-        - 9091:9091
+        - "19091:9091"
 
     alertmanager:
       image: prom/alertmanager
@@ -31,39 +31,39 @@ services:
 #      volumes:
 #          - ./config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
       ports:
-          - "9093:9093"
+        - "19093:9093"
       networks:
-          - monitor
+        - monitor
 
     grafana:
       image: grafana/grafana
       hostname: grafana
       restart: always
       ports:
-          - "3000:3000"
+        - "13000:3000"
       networks:
-          - monitor
+        - monitor
 
     node-exporter:
       image: quay.io/prometheus/node-exporter
       hostname: node-exporter
       restart: always
       ports:
-          - "9100:9100"
+        - "19100:9100"
       networks:
-          - monitor
+        - monitor
 
     cadvisor:
       image: google/cadvisor:latest
       hostname: cadvisor
       restart: always
       volumes:
-          - /:/rootfs:ro
-          - /var/run:/var/run:rw
-          - /sys:/sys:ro
-          - /var/lib/docker/:/var/lib/docker:ro
+        - /:/rootfs:ro
+        - /var/run:/var/run:rw
+        - /sys:/sys:ro
+        - /var/lib/docker/:/var/lib/docker:ro
       ports:
-          - "8081:8080"
+        - "18080:8080"
       networks:
-          - monitor
+        - monitor
 

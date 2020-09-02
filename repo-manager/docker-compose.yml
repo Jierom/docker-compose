@@ -1,0 +1,90 @@
+version: '2'
+
+services:
+  mongodb:
+    image: 'mongo:latest'
+    ports:
+      - "27017:27017"
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=repoadmin
+#      - MONGO_INITDB_ROOT_PASSWORD=repoadmin
+#      - MONGO_INITDB_DATABASE=cvpf_repository_manager
+#    volumes:
+#      - ./init:/docker-entrypoint-initdb.d
+#    command: [--auth]
+    networks:
+      - scaffold-network
+
+  cvpf-image-server:
+    image: 'it-artifactory.yitu-inc.com/docker-local/net/cvpf/image-server:0-2-1-a902d80e'
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/cvpf_repository_manager
+      HOBBIT_URI: 10.40.86.48:8121
+      DB: document
+      CACHE_TIME_TO_LIVE: 60000
+      CACHE_OPEN: 0
+    ports:
+      - '8382:8382'
+    networks:
+      - scaffold-network
+
+  cvpf-repository-manager:
+    image: "it-artifactory.yitu-inc.com/docker-local/net/cvpf/repository-manager:feature_release-1-0-0-hotFixBeta-f890788c"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/cvpf_repository_manager
+#      GeneralObjectFeatureExtractOperator_Group: general-feature-extract-group
+#      FaceImageFeatureExtractOperator_Group: feature-extract-group
+#      FaceAnnoImageFeatureExtractOperator_Group: feature-extract-group
+#      FaceRetrievalOperator_Group: retrieval-group
+#      RAGNAROS_HOST: 10.40.80.56
+#      RAGNAROS_PORT: 30990
+      PedestrianRetrievalOperator_Group: sample-feature-extract
+      GeneralObjectDetectOperator_Group: sample-feature-extract
+
+      GeneralObjectFeatureExtractOperator_Group: sample-feature-extract
+      FaceImageFeatureExtractOperator_Group: sample-feature-extract
+      FaceAnnoImageFeatureExtractOperator_Group: sample-feature-extract
+      FaceRetrievalOperator_Group: sample-retrieval
+      RAGNAROS_HOST: 10.40.80.43
+      RAGNAROS_PORT: 9990
+      ES_CLUSTER_NAME: es_repo_manager
+      ES_CLUSTER_HOST: es-master:9300
+      ES_HEALTH_CHECK_HOST: http://es-master:9200
+      ES_TIMEOUT: 10000
+      DATA_BASE_TYPE: mongo
+      REPO_DEFAULT_MODEL: 3060
+      REPO_UPDATE_SIZE: 5000
+      SIS_HOST: cvpf-image-server
+      SIS_PORT: 8382
+      SERVER_PORT: 8585
+      ENABLE_ROTATION: 'False'
+      ENABLE_ENCRYPTED_FEATURE: 'False'
+      BATCH_LOAD_SIZE: 5000
+      BATCH_CRON: 0 0 3 * * *
+      UNLOAD_WHEN_UPDATE_MODEL: 'False'
+
+    entrypoint: ["java", "-jar", "-Dlogging.level.root=INFO", "/app/app.jar"]
+
+    ports:
+      - "8585:8585"
+
+    networks:
+      - scaffold-network
+
+  es-master:
+    extends:
+      file: docker-compose-es.yml
+      service: es-master
+
+#  es-node1:
+#    extends:
+#      file: docker-compose-es.yml
+#      service: es-node1
+#
+#  es-node2:
+#    extends:
+#      file: docker-compose-es.yml
+#      service: es-node2
+
+networks:
+  scaffold-network: {}

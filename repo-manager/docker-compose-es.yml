@@ -1,0 +1,59 @@
+version: '2'
+ 
+services:
+  es-master:
+    image:  elasticsearch:6.4.3
+    container_name: es-master
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/master/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/master/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/master/logs:/user/share/elasticsearch/logs:rw
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - scaffold-network
+ 
+  es-node1:
+    image:  elasticsearch:6.4.3
+    container_name: es-node1
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/node1/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/node1/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/node1/logs:/user/share/elasticsearch/logs:rw
+    networks:
+      - scaffold-network
+ 
+  es-node2:
+    image:  elasticsearch:6.4.3
+    container_name: es-node2
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/node2/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/node2/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/node2/logs:/user/share/elasticsearch/logs:rw
+    networks:
+      - scaffold-network
+ 
+networks:
+  scaffold-network: {}

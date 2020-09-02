@@ -1,13 +1,12 @@
 flash3-clusters:
   flash3_clusters:
-    -
-      ip: 10.40.58.212
-      id: fip_flash
-      name: fip_flash
+    - ip: 10.40.58.212
+      id: fip-flash
+      name: fip-flash
       region:
         province: 上海市
         city: 上海市
-        county: 嘉定区
+        county: 长宁区
       product_info:
         product_name: fip
         product_version: 1.9.4

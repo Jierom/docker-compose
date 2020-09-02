@@ -1,7 +1,7 @@
 PILOT_SERVICE: http://pilot:8080
 OAUTH_CLIENT_ID: fipClient
 OAUTH_CLIENT_SECRET: 1Tu_Fip_User
-FIP_MAIN_SERVICE: http://10.10.25.87:8099
+FIP_MAIN_SERVICE: http://fip-main:8090
 VPP_DATA_SERVICE: http://vpp:8082
 
 server:
@@ -65,7 +65,7 @@ spring:
             - SetPath=/api/v1/upload/{videoid}
 
         - id: fip
-          uri: ${FIP_MAIN_SERVICE:http://fip-main:8099}
+          uri: ${FIP_MAIN_SERVICE:http://fip-main:8090}
           predicates:
             - Path=/fip/v1/**
           filters:

@@ -19,8 +19,6 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
-    volumes:
-      - "/data/mongo:/data/db"
 
   vpp:
     image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/vpp:20190805
@@ -45,7 +43,7 @@ services:
 
   fip-main:
 #    image: it-artifactory.yitu-inc.com/docker-local/big-data/fip/fip-main:98149654
-    image: fip-main:200f9f38
+    image: fip-main:f00a86a2
     links:
       - fip-mongo
       - vpp
@@ -58,29 +56,36 @@ services:
       - ./fip-main/config/application-flash3_clusters.yaml:/app/config/application-flash3_clusters.yaml
       - ./fip-main/config/application-fp_clusters.yaml:/app/config/application-fp_clusters.yaml
     environment:
-      LUCIFRON_HOST: 10.40.80.43
-      DEBUG_OUTSIDE_RAGNAROS: "true"
-      #如果大螺丝在外部, 那这两个IP要配成自己机器的IP, 视频分析才能work
-      DEBUG_EXTERNAL_IP: 10.10.25.87
-      LOCAL_HOST: 10.10.25.87
       LICENSE_HOST: 10.40.80.18
       LICENSE_PORT: 7411
-      CLUSTER_ID: GD_SZ_001
-      CLUSTER_NAME: 广东深圳福田
-      CLUSTER_PROVINCE: 广东省
-      CLUSTER_CITY: 深圳市
-      CLUSTER_COUNTY: 福田区
-      JOB_CLUSTER_REPORT: "0 0/30 * * * ?"
+      LICENSE_ENABLED: 'false'
+      #如果大螺丝在外部, 那这两个IP要配成自己机器的IP, 视频分析才能work
+      LUCIFRON_HOST: 10.40.80.43
+      DEBUG_OUTSIDE_RAGNAROS: "true"
+      DEBUG_EXTERNAL_IP: 10.10.25.87
+      LOCAL_HOST: 10.10.25.87
+      #根据联动需求配置
+      CLUSTER_ID: SH_SH_01
+      CLUSTER_NAME: 上海市局一号
+      CLUSTER_PROVINCE: 上海市
+      CLUSTER_CITY: 上海市
+      CLUSTER_COUNTY: 
+      JOB_CLUSTER_MONITOR_COLLECT: '0 */1 * * * ?'
+      JOB_CLUSTER_MONITOR_FETCH: '10 */1 * * * ?'
+      JOB_CLUSTER_MONITOR_REPORT: '20 */1 * * * ?'
+      EXCLUDE_REPORT_CLUSTERS:
+      INCLUDE_REPORT_CLUSTERS:
+
 
   frontend-web:
-    image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/portrait-identification/website:master-c4f25a96
+    image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/portrait-identification/website:release-hulk.1-ed214045
     ports:
       - 4000:80
     volumes:
       - ./website/config.template.js:/usr/share/nginx/html/config.js
 
   frontend-node:
-    image: it-artifactory.yitu-inc.com/ipiw-docker/ipiw-node:master-1eb31d9a
+    image: it-artifactory.yitu-inc.com/ipiw-docker/ipiw-node:release-hulk.1-01ee858f
     ports:
       - 4100:8000
     environment:
@@ -109,7 +114,7 @@ services:
     ports:
       - 9080:9080
     volumes:
-      - ./p2p/config/application.yml:/app/config/application.yml
+      - ./p2p-gateway/config/application.yml:/app/config/application.yml
 
   p2p-component:
     image: it-artifactory.yitu-inc.com/docker-local/p2p:release_2-0-1-50f90995
@@ -123,15 +128,19 @@ services:
                                  "PROXY_PORT": 7093,
                                  "HTTPS_PORT": 8443,
                                  "HTTP_PORT": 7600,
-                                 "current_cluster_id": "GD_SZ_001",
+                                 "current_cluster_id": "SH_SH_01",
                                  "GATEWAY_HOST": "p2p-api-gateway",
                                  "GATEWAY_PORT": 9080,
                                  "p2p": {
                                    "routes": {
                                      "static": {
                                        "directRoute": {
-                                         "GD_SZ_001": "10.10.25.87:8443:7600",
-                                         "GD_SZ_002": "10.40.57.75:8443:7600"
+                                         "SH_SH_01": "10.10.25.87:8443:7600",
+                                         "SH_SH_02": "10.10.25.87:18443:17600",
+                                         "SH_SH_CN_01": "10.10.25.87:28443:27600",
+                                         "SC_01": "10.10.25.162:8443:7600",
+                                         "SC_CD_WH_01": "10.10.25.162:18443:17600",
+                                         "JX_JJ_01": "10.10.25.162:28443:27600"
                                        },
                                        "indirectRoute": {}
                                      }
@@ -139,6 +148,7 @@ services:
                                  }
                                }
                                '
+                               
   fp-proxy:
     image: it-artifactory.yitu-inc.com/docker-local/gitlab-ci-artifacts/fip/fp-proxy:dev-8ec77215
     links:
@@ -173,7 +183,6 @@ services:
       SIS_PORT: 8382
       SERVER_PORT: 8585
       ENABLE_ROTATION: 'True'
-    #    command: ["java", "-jar", "-Dlogging.level.root=DEBUG", "/app/app.jar"]
     entrypoint: ["java", "-jar", "-Xmx8192M", "-Dlogging.level.root=INFO", "/app/app.jar"]
     ports:
       - 8585:8585
@@ -181,3 +190,17 @@ services:
       - fip-mongo
       - image-server
 
+
+  prometheus:
+    image: prom/prometheus
+    hostname: prometheus
+    restart: always
+    volumes:
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/config/node_down.yml:/etc/prometheus/node_down.yml
+    ports:
+      - 9090:9090
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+      - 9091:9091

@@ -23,11 +23,10 @@ spring:
             - AddOAuthClient=fipClient, 1Tu_Fip_User
             - SetPath=/oauth/token
 
-
         - id: fip1
           uri: ${FIP_MAIN_SERVICE:http://fip-main:8090}
           predicates:
-            - Path=/fip/v1/clusters/**
+            - Path=/fip/v1/clusters/self
           filters:
             - RewritePath= /fip/v1/(?<segment>.*),/$\{segment}
             - CheckAuth=false
@@ -39,7 +38,6 @@ spring:
           filters:
             - RewritePath= /fip/v1/(?<segment>.*),/$\{segment}
             - CheckAuth=false
-
 
         - id: fip3
           uri: ${FIP_MAIN_SERVICE:http://fip-main:8090}
@@ -55,12 +53,12 @@ spring:
             - Path=/fip/v1/repositories
           filters:
             - RewritePath= /fip/v1/(?<segment>.*),/$\{segment}
-#            - CheckAuth=false
+            - CheckAuth=false
 
         - id: fip5
           uri: ${FIP_MAIN_SERVICE:http://fip-main:8090}
           predicates:
-            - Path=/fip/v1/repositories/*
+            - Path=/fip/v1//repositories/*
           filters:
             - RewritePath= /fip/v1/(?<segment>.*),/$\{segment}
             - CheckAuth=false
@@ -72,7 +70,12 @@ spring:
           filters:
             - RewritePath=/api/auth/(?<segment>.*), /oauth/$\{segment}
 
-
+        - id: pushgateway
+          uri: ${PUSHGATEWAY_SERVICE:http://pushgateway:9091}
+          predicates:
+            - Path=/prometheus/pushgateway/**
+          filters:
+            - RewritePath=/prometheus/pushgateway/(?<segment>.*),/$\{segment}
 
 auth-config:
   oauthServer: ${PILOT_SERVICE:http://pilot:8080}

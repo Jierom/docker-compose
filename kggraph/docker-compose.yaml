@@ -14,9 +14,9 @@ services:
       - ./data/mysql:/var/lib/mysql
 
   kggraph:
-    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-graph:v0.2.10
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-graph:v0.2.13
     ports:
-      - 8080:8080
+      - 18080:8080
     volumes:
         # 数据存储的目录
       - ./data/hugegraph-0.10.4/:/app/hugegraph-0.10.4/rocksdb-data/
@@ -32,9 +32,9 @@ services:
       - SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
 
   kggraph-studio:
-    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-graph-studio:v0.2.10
+    image: it-artifactory.yitu-inc.com/docker-local/big-data/kg-graph-studio:v0.2.13
     ports:
-      - 8088:8088
+      - 18088:8088
     volumes:
       - ./conf/hugegraph-studio-0.10.0/:/app/hugegraph-studio-0.10.0/conf/
   

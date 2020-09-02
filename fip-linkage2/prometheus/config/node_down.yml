@@ -2,10 +2,10 @@ groups:
 - name: node_down
   rules:
   - alert: InstanceDown
-    expr: up{job="fip"} == 0
-    for: 10s
+    expr: up == 0
+    for: 1m
     labels:
-      severity: high
+      user: test
     annotations:
       summary: "Instance {{ $labels.instance }} down"
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minutes."
