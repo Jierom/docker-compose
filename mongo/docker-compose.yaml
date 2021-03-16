@@ -2,10 +2,9 @@ version: "3"
 
 services:
   mongo:
-#    image: mongo:4.0.6
-    image: it-artifactory.yitu-inc.com/docker-pro/opod/mongo:3.4-xenial
+    image: mongo:4.0.16
     restart: always
     ports:
       - 27018:27017
     volumes:
-      - ./mongo:/data/db
+      - ./data:/data/db
